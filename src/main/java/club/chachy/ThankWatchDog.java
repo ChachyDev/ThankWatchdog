@@ -1,16 +1,19 @@
-package com.example;
+package club.chachy;
 
 import cc.hyperium.Hyperium;
 import cc.hyperium.event.EventBus;
 import cc.hyperium.event.InvokeEvent;
 import cc.hyperium.event.client.InitializationEvent;
 import cc.hyperium.event.network.chat.ChatEvent;
+import cc.hyperium.handlers.handlers.HypixelDetector;
 import cc.hyperium.internal.addons.IAddon;
-import com.example.commands.AddonCommand;
 import net.minecraft.client.Minecraft;
 
 // All addons must implement IAddon
-public class AddonExample implements IAddon {
+public class ThankWatchDog implements IAddon {
+    private static final String WATCHDOG_BAN_TRIGGER = "A player has been removed from your game for hacking or abuse. Thanks for reporting it!";
+    private static final String WATCHDOG_ANNOUNCEMENT_TRIGGER = "[WATCHDOG ANNOUNCEMENT]";
+    private static final String THANK_WATCHDOG_MESSAGE = "/achat Thanks Watchdog!";
 
     /**
      * Invoked once the plugin has successfully loaded
@@ -19,24 +22,21 @@ public class AddonExample implements IAddon {
     @Override
     public void onLoad() {
         // Log that the addon has loaded
-        Hyperium.LOGGER.info("Successfully loaded Addon!");
-
-        // Register the class to the EventBus
+        Hyperium.LOGGER.info("Successfully loaded ThankWatchdog!");
         EventBus.INSTANCE.register(this);
     }
 
     @InvokeEvent
     public void onInitialization(InitializationEvent event) {
         // Register a command on initialization
-        Hyperium.INSTANCE.getHandlers().getCommandHandler().registerCommand(new AddonCommand());
+        Hyperium.INSTANCE.getHandlers().getCommandHandler().registerCommand(new ToggleCommand());
+        EventBus.INSTANCE.register(this);
     }
 
     @InvokeEvent
-    public void onChatMessage(ChatEvent event) {
-        // If any chat message contains "secret message!"
-        if (event.getChat().getUnformattedText().contains("secret message!")) {
-            //Toggle fullscreen
-            Minecraft.getMinecraft().toggleFullscreen();
+    public void onChat(ChatEvent e) {
+        if ((e.getChat().getUnformattedText().contains(WATCHDOG_BAN_TRIGGER) || e.getChat().getUnformattedText().contains(WATCHDOG_ANNOUNCEMENT_TRIGGER)) && Config.INSTANCE.isEnabled() && HypixelDetector.getInstance().isHypixel()) {
+            Minecraft.getMinecraft().thePlayer.sendChatMessage(THANK_WATCHDOG_MESSAGE);
         }
     }
 
