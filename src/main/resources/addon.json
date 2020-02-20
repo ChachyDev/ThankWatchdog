@@ -1,7 +1,7 @@
 {
-  "name":"Addon Example",
+  "name":"Thank Watchdog",
   "version":"1.0",
-  "mainClass":"com.example.AddonExample",
-  "desc":"Hyperium Addon Example",
+  "mainClass":"club.chachy.ThankWatchDog",
+  "desc":"A port of Thank Watchdog from Hyperium",
   "versionCode": "1.0"
 }
